@@ -2,9 +2,10 @@
 #include<stdlib.h>
 #include<conio.h>
 
-// Single Linked List structure...
+// Doubly Linked List structure...
 struct Node {
     int data;
+    struct Node *prev;
     struct Node *next;
 }; typedef struct Node node;
 
@@ -14,6 +15,7 @@ node *head = NULL;
 node* createNewNode(int item) {
     node *newnode = (node*)malloc(sizeof(node));
     newnode->data = item;
+    newnode->prev = NULL;
     newnode->next = NULL;
     return newnode;
 }
@@ -21,7 +23,10 @@ node* createNewNode(int item) {
 // Function to insert at beginning
 void insertAtBeg(int item) {
     node *newnode = createNewNode(item);
-    newnode->next = head;
+    if (head != NULL) {
+        newnode->next = head;
+        head->prev = newnode;
+    }
     head = newnode;
 }
 
@@ -44,7 +49,10 @@ void insertAtPos(int pos, int item) {
     
     if (temp != NULL) {
         newnode->next = temp->next;
+        if (temp->next != NULL)
+            temp->next->prev = newnode;
         temp->next = newnode;
+        newnode->prev = temp;
     } else {
         printf("\n\t\t!!! Invalid Position...\n");
     }
@@ -53,18 +61,25 @@ void insertAtPos(int pos, int item) {
 // Function to insert at the end
 void insertAtEnd(int item) {
     node *newnode = createNewNode(item);
-    if (head == NULL) head = newnode;
-    
+    if (head == NULL) {
+        head = newnode;
+        return;
+    }
     node *temp = head;
     while (temp->next != NULL)
         temp = temp->next;
     temp->next = newnode;
+    newnode->prev = temp;
 }
 
 // Function to delete at the beginning
 void deleteAtBeg(){
-    if(head==NULL) printf("\n\t!!!Empty Node list...\n");
-    else head = head->next;
+    if(head == NULL) printf("\n\t!!!Empty Node list...\n");
+    else {
+        head = head->next;
+        if (head != NULL)
+            head->prev = NULL;
+    }
 }
 
 // Function to delete at position 
@@ -79,25 +94,30 @@ void deleteAtPos(int pos){
     }
 
     node *temp = head;
-    
-    for (int i = 1; i < pos - 1 && temp != NULL; i++)
+    for (int i = 1; i < pos && temp != NULL; i++)
         temp = temp->next;
     
-    if (temp != NULL)
-        temp->next = (temp->next)->next;
-    else {
+    if (temp != NULL) {
+        if (temp->prev != NULL)
+            temp->prev->next = temp->next;
+        if (temp->next != NULL)
+            temp->next->prev = temp->prev;
+    } else {
         printf("\n\t\t!!! Invalid Position...\n");
     }
 }
 
 // Function to delete at end
 void deleteAtEnd(){
-    if(head==NULL) printf("\n\t!!!Empty Node list...\n");
-    else{
+    if(head == NULL) printf("\n\t!!!Empty Node list...\n");
+    else {
         node *temp = head;
-        while((temp->next)->next!=NULL)
+        while (temp->next != NULL)
             temp = temp->next;
-        temp->next = NULL;
+        if (temp->prev != NULL)
+            temp->prev->next = NULL;
+        else
+            head = NULL;
     }
 }
 
@@ -110,7 +130,7 @@ void display() {
         return;
     }
     while (temp != NULL) {
-        printf("%d -> ", temp->data);
+        printf("%d <-> ", temp->data);
         temp = temp->next;
     }
     printf("NULL\n");
@@ -175,16 +195,6 @@ void Dashboard() {
 }
 
 int main() {
-     insertAtBeg(10);
-    insertAtBeg(5);
-    insertAtBeg(20);
-    insertAtBeg(15);
-
-    insertAtEnd(50);
-    insertAtEnd(60);
-
-    insertAtPos(5,100);
-
     Dashboard();
     return 0;
 }
