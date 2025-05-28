@@ -5,7 +5,7 @@
 
 int main()
 {
-    int vstack[MAX];
+    float vstack[MAX];
     int tos = -1;
 
     char postfix[MAX];
@@ -28,7 +28,7 @@ int main()
     printf("\nvalue\top1\top2\tresult\tV-Stack\n");
     printf("----------------------------------------\n");
 
-    int op1, op2, result;
+    float op1, op2, result;
     for (i = 0; postfix[i] != '\0'; i++)
     {
         op1 = -1;
@@ -60,17 +60,17 @@ int main()
         }
 
         if (op1 != -1)
-            printf("%c\t%d\t%d\t%d\t", postfix[i], op1, op2, result);
+            printf("%c\t%.2f\t%.2f\t%.2f\t", postfix[i], op1, op2, result);
             else
             printf("%c\t-\t-\t-\t", postfix[i]);
 
         for (int j = 0; j <= tos; j++)
         {
-            printf("%d ", vstack[j]);
+            printf("%.2f ", vstack[j]);
         }
         printf("\n");
     }
 
-    printf("\nThe value is: %d", vstack[tos]);
+    printf("\nThe value is: %.2f", vstack[tos]);
     getch();
 }
